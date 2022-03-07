@@ -17,7 +17,7 @@ if [[ $1 == "--uninstall" ]]; then
 	echo "Bye bye Tux :'("
 	rm "$BG"
 	if [[ -f /etc/default/grub ]]; then
-		sed -i /$("GRUB_BACKGROUND=$BG")/d /etc/default/grub
+		sed -i "/$GRUB_BACKGROUND/d" /etc/default/grub
 	fi
 # install the background
 else
@@ -37,5 +37,5 @@ update-grub
 if [ $installation -eq 1 ]; then
 	echo "Tux is now set as your grub background :)"
 else
-	echo "\033[31mTux is gone\033[0m"
+	printf "\033[31mTux is gone\033[0m\n"
 fi
