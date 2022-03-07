@@ -1,5 +1,5 @@
 #!/bin/bash
-BGDIR="/boot/grub/tux_background.jpg"
+BG="/boot/grub/tux_background.jpg"
 
 # check if command update-grub exists
 command -v update-grub &>/dev/null || { echo "update-grub is not installed. Aborting."; exit 1; }
@@ -9,15 +9,33 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit 1
 fi
 
-echo "Setting background..."
-cp ./images/tux.jpg $BGDIR
-
-if [[ -f /etc/default/grub ]]; then
-	echo "GRUB_BACKGROUND=$BGDIR" | tee -a /etc/default/grub >/dev/null
+installation=true
+# uninstall the background
+if [[ $1 == "--uninstall" ]]; then
+	installation=false
+	echo "Uninstalling the background..."
+	echo "Bye bye Tux :'("
+	rm "$BG"
+	if [[ -f /etc/default/grub ]]; then
+		sed -i /"GRUB_BACKGROUND=$BG"/d /etc/default/grub
+	fi
+# install the background
 else
-	echo "configuration file /etc/default/grub does not exist"
-	exit 1
+	echo "Setting background..."
+	cp ./images/tux.jpg $BG
+
+	if [[ -f /etc/default/grub ]]; then
+		echo "GRUB_BACKGROUND=$BG" | tee -a /etc/default/grub >/dev/null
+	else
+		echo "configuration file /etc/default/grub does not exist"
+		exit 1
+	fi
 fi
 
 update-grub
-echo "Tux is now set as your grub background :)"
+
+if [ installation ]; then
+	echo "Tux is now set as your grub background :)"
+else
+	echo "\033[31mTux is gone\033[0m"
+fi
