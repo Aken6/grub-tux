@@ -18,3 +18,8 @@ chmod +x install.sh
 ```
 sudo ./install.sh
 ```
+
+If you want to uninstall you can run:
+```
+sudo ./install.sh --uninstall
+```
